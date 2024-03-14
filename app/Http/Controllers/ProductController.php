@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 //import model product
-use App\Models\Product; 
+use App\Models\Product;
 
 //import return type View
 use Illuminate\View\View;
@@ -16,6 +16,7 @@ use Illuminate\Http\RedirectResponse;
 
 //import Facades Storage
 use Illuminate\Support\Facades\Storage;
+use Vinkla\Hashids\Facades\Hashids;
 
 class ProductController extends Controller
 {
@@ -24,7 +25,7 @@ class ProductController extends Controller
      *
      * @return void
      */
-    public function index() : View
+    public function index(): View
     {
         //get all products
         $products = Product::latest()->paginate(10);
@@ -76,7 +77,7 @@ class ProductController extends Controller
         //redirect to index
         return redirect()->route('products.index')->with(['success' => 'Data Berhasil Disimpan!']);
     }
-    
+
     /**
      * show
      *
@@ -85,13 +86,15 @@ class ProductController extends Controller
      */
     public function show(string $id): View
     {
+
+        $id = Hashids::decode($id);
         //get product by ID
-        $product = Product::findOrFail($id);
+        $product = Product::findOrFail($id[0]);
 
         //render view with product
         return view('products.show', compact('product'));
     }
-    
+
     /**
      * edit
      *
@@ -106,7 +109,7 @@ class ProductController extends Controller
         //render view with product
         return view('products.edit', compact('product'));
     }
-        
+
     /**
      * update
      *
@@ -136,7 +139,7 @@ class ProductController extends Controller
             $image->storeAs('public/products', $image->hashName());
 
             //delete old image
-            Storage::delete('public/products/'.$product->image);
+            Storage::delete('public/products/' . $product->image);
 
             //update product with new image
             $product->update([
@@ -146,7 +149,6 @@ class ProductController extends Controller
                 'price'         => $request->price,
                 'stock'         => $request->stock
             ]);
-
         } else {
 
             //update product without image
@@ -174,7 +176,7 @@ class ProductController extends Controller
         $product = Product::findOrFail($id);
 
         //delete image
-        Storage::delete('public/products/'. $product->image);
+        Storage::delete('public/products/' . $product->image);
 
         //delete product
         $product->delete();

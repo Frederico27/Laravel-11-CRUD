@@ -1,3 +1,5 @@
+@use('Vinkla\Hashids\Facades\Hashids')
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -13,8 +15,7 @@
         <div class="row">
             <div class="col-md-12">
                 <div>
-                    <h3 class="text-center my-4">Tutorial Laravel 11 untuk Pemula</h3>
-                    <h5 class="text-center"><a href="https://santrikoding.com">www.santrikoding.com</a></h5>
+                    <h3 class="text-center my-4">Laravel 11</h3>
                     <hr>
                 </div>
                 <div class="card border-0 shadow-sm rounded">
@@ -37,11 +38,11 @@
                                             <img src="{{ asset('/storage/products/'.$product->image) }}" class="rounded" style="width: 150px">
                                         </td>
                                         <td>{{ $product->title }}</td>
-                                        <td>{{ "Rp " . number_format($product->price,2,',','.') }}</td>
+                                        <td>{{ "$ " . number_format($product->price,2,',','.') }}</td>
                                         <td>{{ $product->stock }}</td>
                                         <td class="text-center">
                                             <form onsubmit="return confirm('Apakah Anda Yakin ?');" action="{{ route('products.destroy', $product->id) }}" method="POST">
-                                                <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-dark">SHOW</a>
+                                                <a href="{{ route('products.show', Hashids::encode($product->id)) }}" class="btn btn-sm btn-dark">SHOW</a>
                                                 <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-primary">EDIT</a>
                                                 @csrf
                                                 @method('DELETE')
