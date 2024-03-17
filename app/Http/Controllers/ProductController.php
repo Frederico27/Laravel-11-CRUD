@@ -4,7 +4,8 @@ namespace App\Http\Controllers;
 
 //import model product
 use App\Models\Product;
-
+use App\Services\HashIdServices;
+use Hashids\Hashids;
 //import return type View
 use Illuminate\View\View;
 
@@ -16,10 +17,11 @@ use Illuminate\Http\RedirectResponse;
 
 //import Facades Storage
 use Illuminate\Support\Facades\Storage;
-use Vinkla\Hashids\Facades\Hashids;
+
 
 class ProductController extends Controller
 {
+
     /**
      * index
      *
@@ -75,7 +77,7 @@ class ProductController extends Controller
         ]);
 
         //redirect to index
-        return redirect()->route('products.index')->with(['success' => 'Data Berhasil Disimpan!']);
+        return redirect()->route('products.index')->with(['success' => 'Data Berhasil Disimpan!'])->once();
     }
 
     /**
@@ -87,7 +89,8 @@ class ProductController extends Controller
     public function show(string $id): View
     {
 
-        $id = Hashids::decode($id);
+        //Decode HashId from Route
+        $id = (new HashIdServices())->decode($id);
         //get product by ID
         $product = Product::findOrFail($id[0]);
 
@@ -103,8 +106,11 @@ class ProductController extends Controller
      */
     public function edit(string $id): View
     {
+        //decode id
+        $id = (new HashIdServices())->decode($id);
+
         //get product by ID
-        $product = Product::findOrFail($id);
+        $product = Product::findOrFail($id[0]);
 
         //render view with product
         return view('products.edit', compact('product'));
@@ -128,8 +134,10 @@ class ProductController extends Controller
             'stock'         => 'required|numeric'
         ]);
 
+        $id = (new HashIdServices())->decode($id);
+
         //get product by ID
-        $product = Product::findOrFail($id);
+        $product = Product::findOrFail($id[0]);
 
         //check if image is uploaded
         if ($request->hasFile('image')) {
@@ -161,7 +169,7 @@ class ProductController extends Controller
         }
 
         //redirect to index
-        return redirect()->route('products.index')->with(['success' => 'Data Berhasil Diubah!']);
+        return redirect()->route('products.index')->with(['success' => 'Data Susessu Edita!']);
     }
 
     /**
@@ -172,8 +180,11 @@ class ProductController extends Controller
      */
     public function destroy($id): RedirectResponse
     {
+        //decrypt hasids from url parameter
+        $id = (new HashIdServices())->decode($id);
+
         //get product by ID
-        $product = Product::findOrFail($id);
+        $product = Product::findOrFail($id[0]);
 
         //delete image
         Storage::delete('public/products/' . $product->image);
