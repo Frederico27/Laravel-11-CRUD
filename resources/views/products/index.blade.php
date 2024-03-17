@@ -1,4 +1,3 @@
-@use('Vinkla\Hashids\Facades\Hashids')
 
 <!DOCTYPE html>
 <html lang="en">
@@ -42,7 +41,7 @@
                                         <td>{{ $product->stock }}</td>
                                         <td class="text-center">
                                             <form onsubmit="return confirm('Apakah Anda Yakin ?');" action="{{ route('products.destroy', $product->id) }}" method="POST">
-                                                <a href="{{ route('products.show', Hashids::encode($product->id)) }}" class="btn btn-sm btn-dark">SHOW</a>
+                                                <a href="{{ route('products.show', $product->id) }}" class="btn btn-sm btn-dark">SHOW</a>
                                                 <a href="{{ route('products.edit', $product->id) }}" class="btn btn-sm btn-primary">EDIT</a>
                                                 @csrf
                                                 @method('DELETE')
